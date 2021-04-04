@@ -2,7 +2,25 @@ import sys
 import requests
 import json
 from bs4 import BeautifulSoup, Comment
-    
+        
+def spStock(data):  
+    name = data["title"]   
+    variant = data["variants"]
+
+    out = {'name': name}
+    info = '| {:^5} | {:^14} | {:8} |'.format("SIZE", "VARIANT ID", "QUANTITY") + "\n"
+
+    for i in range(len(variant)):
+        size = variant[i]["options"][1]
+        variant_id = variant[i]["id"]
+        quantity = abs(variant[i]["inventory_quantity"])
+        #out += '------------------------------------------------\n'
+        info += '| {:^5} | {:^14} | {:^8} |'.format(size, variant_id, quantity) + "\n"
+
+    out['info'] = info
+    print(out)
+    return out
+
 def snkVariants(data):
     product = data["product"]
     variant = product["variants"]
@@ -10,40 +28,16 @@ def snkVariants(data):
     name = variant[0]['name'].split('-')
     name = name[0]
 
-    out = name + "\n"
-    out += '| {:^9} | {:^14} |'.format("SIZE", "VARIANT ID") + "\n"
+    out = {'name': name}
+    info = '| {:^9} | {:^14} |'.format("SIZE", "VARIANT ID") + "\n"
 
     for i in range(len(variant)):
         size = variant[i]["option1"]
         variant_id = variant[i]["id"]
-        out += '| {:^9} | {:^14} |'.format(size, variant_id) + "\n"
-    return out
+        info += '| {:^9} | {:^14} |'.format(size, variant_id) + "\n"
     
-def spVariants(data):
-    name = data["title"]      
-    variant = data["variants"]
-
-    out = name + "\n"
-    out += '| {:^5} | {:^14} |'.format("SIZE", "VARIANT ID") + "\n"
-
-    for i in range(len(variant)):
-        size = variant[i]["options"][1]
-        variant_id = variant[i]["id"]
-        out += '| {:^5} | {:^14} |'.format(size, variant_id) + "\n"
-    return out
-
-def spStock(data):  
-    name = data["title"]   
-    variant = data["variants"]
-
-    out = name + "\n"
-    out += '| {:^5} | {:^14} | {:8} |'.format("SIZE", "VARIANT ID", "QUANTITY") + "\n"
-
-    for i in range(len(variant)):
-        size = variant[i]["options"][1]
-        variant_id = variant[i]["id"]
-        quantity = abs(variant[i]["inventory_quantity"])
-        out += '| {:^5} | {:^14} | {:^8} |'.format(size, variant_id, quantity) + "\n"
+    out['info'] = info
+    print(out)
     return out
 
 def scrapeShopNiceKicksWebsite(url):
@@ -106,10 +100,7 @@ def main():
     try:
         url = sys.argv[2]
         try:
-            if(sys.argv[1] == "--spVariants"):
-                data = scrapeShoePalanceWebsite(url)
-                spVariants(data)
-            elif(sys.argv[1] == "--spStock"):
+            if(sys.argv[1] == "--spStock"):
                 data = scrapeShoePalanceWebsite(url)
                 spStock(data)
             elif(sys.argv[1] == "--snkVariants"):
@@ -123,8 +114,7 @@ def main():
             
         except IndexError:
             print("\n\tMissing arguments")
-            print("\t\t--spVariants url for ShoePalace variants")
-            print("\t\t--spStock url for ShoePalace stock")
+            print("\t\t--spStock url for ShoePalace stock and variants")
             print("\t\t--snkVariants url for ShopNiceKicks variants")
         except ValueError:  # includes simplejson.decoder.JSONDecodeError
             print("\nDecoding JSON has failed")

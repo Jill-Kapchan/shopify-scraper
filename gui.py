@@ -6,17 +6,18 @@ import PySimpleGUI as sg
 import scraper as Scraper
 
 layout = [  [sg.Text('URL'), sg.Input(key='-URL-')],
-            [sg.Text('Shoepalace'), sg.Button('spVariants'), sg.Button('spStock') ],
-            [sg.Text('ShopNiceKicks'), sg.Button('snkVariants')],
-            [sg.Multiline(size=(50, 15), key='-OUTPUT-')] ]
-            #[sg.PopupScrolled(f"{out}")]]
+            [sg.Button('Shoe Palace', size=(20,1)), sg.Button('Shop Nice Kicks', size=(20,1))],
+            [sg.T(size=(52,1), key='-NAME-')],
+            [sg.Multiline(size=(60, 18), key='-OUTPUT-')] ]
+            #justification='center',
 
-window = sg.Window('Jill\'s scraper',
+window = sg.Window("Jill\'s scraper cause Brian won't download the packages",
                    layout,
                    resizable=True,
-                   finalize=True)  # this is the chang
+                   finalize=True,
+                   element_justification='c')
 
-window.set_min_size((600,400))
+window.set_min_size((400,200))
 
 window.bind('<Configure>',"Event")
 
@@ -26,34 +27,32 @@ try:
 
         if values != None:
             url = values.setdefault('-URL-', None)
-            out = values.setdefault('-OUTPUT-', None)
+            out = {}
         
         if(url != None and validators.url(url) == True):
             try:
-                if event == 'spVariants':
-                    data = Scraper.scrapeShoePalanceWebsite(url)
-                    out = Scraper.spVariants(data)
-                    print('clicked spVariants')
-                    print(out)
-
-                elif event == 'spStock':
+                if event == 'Shoe Palace':
                     data = Scraper.scrapeShoePalanceWebsite(url)
                     out = Scraper.spStock(data)
-                    print('clicked spStock')
+                    print('clicked shoepalace')
                     print(out)
 
-                elif event == 'snkVariants':
+                elif event == 'Shop Nice Kicks':
                     data = Scraper.scrapeShopNiceKicksWebsite(url)
                     out = Scrape.snkVariants(data)
-                    print('clicked snkVariants')
+                    print('clicked snk')
+                else:
+                    window['-OUTPUT-'].update()
 
                 # Need to set to none to escape the if statement
                 url = None
-                window['-OUTPUT-'].update(out)
+                if len(out) == 2:
+                    window['-NAME-'].update(out['name'])
+                    window['-OUTPUT-'].update(out['info'])
 
             except json.decoder.JSONDecodeError as e:
                 tb = traceback.format_exc()
-                sg.popup_error(f'Scraped the wrong website',
+                sg.popup_error(f'Cannot scrape website',
                                 "Please double check the link")
 
         if event == "Event":
