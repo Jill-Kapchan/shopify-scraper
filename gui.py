@@ -9,6 +9,7 @@ layout = [  [sg.Text('URL'), sg.Input(key='-URL-')],
             [sg.Text('Shoepalace'), sg.Button('spVariants'), sg.Button('spStock') ],
             [sg.Text('ShopNiceKicks'), sg.Button('snkVariants')],
             [sg.Multiline(size=(50, 15), key='-OUTPUT-')] ]
+            #[sg.PopupScrolled(f"{out}")]]
 
 window = sg.Window('Jill\'s scraper',
                    layout,
@@ -48,7 +49,7 @@ try:
 
                 # Need to set to none to escape the if statement
                 url = None
-                window['-OUTPUT-'].update('Hi\n', out)
+                window['-OUTPUT-'].update(out)
 
             except json.decoder.JSONDecodeError as e:
                 tb = traceback.format_exc()
