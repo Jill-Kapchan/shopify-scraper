@@ -1,4 +1,8 @@
+import traceback
+import validators
+import json
 import PySimpleGUI as sg
+
 import scraper as Scraper
 
 layout = [  [sg.Text('URL'), sg.Input(key='url')],
@@ -14,22 +18,42 @@ window.set_min_size((600,400))
 
 window.bind('<Configure>',"Event")
 
-while True:
-    event, values = window.read()
-    if event == 'spVariants':
-        data = Scraper.scrapeShoePalanceWebsite(values['url'])
-        Scraper.spVariants(data)
-        print('clicked spVariants')
+try:
+    while True:
+        event, values = window.read()
 
-    if event == 'spStock':
-        print('clicked spStock')
+        if values != None:
+            url = values.setdefault('url', None)
+        
+        if(url != None and validators.url(url) == True):
 
-    if event == 'snkVariants':
-        print('clicked snkVariants')
+            try:
+                if event == 'spVariants':
+                    data = Scraper.scrapeShoePalanceWebsite(url)
+                    Scraper.spVariants(data)
+                    print('clicked spVariants')
 
-    if event == "Event":
-        print(window.size)
+                if event == 'spStock':
+                    data = Scraper.scrapeShoePalanceWebsite(url)
+                    Scraper.spStock(data)
+                    print('clicked spStock')
 
-    if event == sg.WIN_CLOSED:
-        print("I am done")
-        break
+                if event == 'snkVariants':
+                    data = Scraper.scrapeShopNiceKicksWebsite(url)
+                    Scrape.snkVariants(data)
+                    print('clicked snkVariants')
+            except json.decoder.JSONDecodeError as e:
+                tb = traceback.format_exc()
+                sg.popup_error(f'Scraped the wrong website',
+                                "Please double check the link")
+
+        if event == "Event":
+            print(window.size)
+
+        if event == sg.WIN_CLOSED:
+            print("I am done")
+            break
+
+except Exception as e:
+    tb = traceback.format_exc()
+    sg.popup_error(f'AN EXCEPTION OCCURRED!', e, tb)
