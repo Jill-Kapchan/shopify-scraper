@@ -5,9 +5,10 @@ import PySimpleGUI as sg
 
 import scraper as Scraper
 
-layout = [  [sg.Text('URL'), sg.Input(key='url')],
+layout = [  [sg.Text('URL'), sg.Input(key='-URL-')],
             [sg.Text('Shoepalace'), sg.Button('spVariants'), sg.Button('spStock') ],
-            [sg.Text('ShopNiceKicks'), sg.Button('snkVariants')] ]
+            [sg.Text('ShopNiceKicks'), sg.Button('snkVariants')],
+            [sg.Multiline(size=(50, 15), key='-OUTPUT-')] ]
 
 window = sg.Window('Jill\'s scraper',
                    layout,
@@ -23,25 +24,32 @@ try:
         event, values = window.read()
 
         if values != None:
-            url = values.setdefault('url', None)
+            url = values.setdefault('-URL-', None)
+            out = values.setdefault('-OUTPUT-', None)
         
         if(url != None and validators.url(url) == True):
-
             try:
                 if event == 'spVariants':
                     data = Scraper.scrapeShoePalanceWebsite(url)
-                    Scraper.spVariants(data)
+                    out = Scraper.spVariants(data)
                     print('clicked spVariants')
+                    print(out)
 
-                if event == 'spStock':
+                elif event == 'spStock':
                     data = Scraper.scrapeShoePalanceWebsite(url)
-                    Scraper.spStock(data)
+                    out = Scraper.spStock(data)
                     print('clicked spStock')
+                    print(out)
 
-                if event == 'snkVariants':
+                elif event == 'snkVariants':
                     data = Scraper.scrapeShopNiceKicksWebsite(url)
-                    Scrape.snkVariants(data)
+                    out = Scrape.snkVariants(data)
                     print('clicked snkVariants')
+
+                # Need to set to none to escape the if statement
+                url = None
+                window['-OUTPUT-'].update('Hi\n', out)
+
             except json.decoder.JSONDecodeError as e:
                 tb = traceback.format_exc()
                 sg.popup_error(f'Scraped the wrong website',
@@ -57,3 +65,5 @@ try:
 except Exception as e:
     tb = traceback.format_exc()
     sg.popup_error(f'AN EXCEPTION OCCURRED!', e, tb)
+
+window.close()

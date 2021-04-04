@@ -9,35 +9,42 @@ def snkVariants(data):
     
     name = variant[0]['name'].split('-')
     name = name[0]
-    print("\n" + name)
-    print('| {:^9} | {:^14} |'.format("SIZE", "VARIANT ID"))
+
+    out = name + "\n"
+    out += '| {:^9} | {:^14} |'.format("SIZE", "VARIANT ID") + "\n"
+
     for i in range(len(variant)):
         size = variant[i]["option1"]
         variant_id = variant[i]["id"]
-        print('| {:^9} | {:^14} |'.format(size, variant_id))
+        out += '| {:^9} | {:^14} |'.format(size, variant_id) + "\n"
+    return out
     
 def spVariants(data):
-    name = data["title"]
-    print("\n" + name)
-    
+    name = data["title"]      
     variant = data["variants"]
-    print('| {:^5} | {:^14} |'.format("SIZE", "VARIANT ID"))
+
+    out = name + "\n"
+    out += '| {:^5} | {:^14} |'.format("SIZE", "VARIANT ID") + "\n"
+
     for i in range(len(variant)):
         size = variant[i]["options"][1]
         variant_id = variant[i]["id"]
-        print('| {:^5} | {:^14} |'.format(size, variant_id))
+        out += '| {:^5} | {:^14} |'.format(size, variant_id) + "\n"
+    return out
 
 def spStock(data):  
-    name = data["title"]
-    print("\n" + name)
-    
+    name = data["title"]   
     variant = data["variants"]
-    print('| {:^5} | {:^14} | {:8} |'.format("SIZE", "VARIANT ID", "QUANTITY"))
+
+    out = name + "\n"
+    out += '| {:^5} | {:^14} | {:8} |'.format("SIZE", "VARIANT ID", "QUANTITY") + "\n"
+
     for i in range(len(variant)):
         size = variant[i]["options"][1]
         variant_id = variant[i]["id"]
         quantity = abs(variant[i]["inventory_quantity"])
-        print('| {:^5} | {:^14} | {:^8} |'.format(size, variant_id, quantity))
+        out += '| {:^5} | {:^14} | {:^8} |'.format(size, variant_id, quantity) + "\n"
+    return out
 
 def scrapeShopNiceKicksWebsite(url):
     page = requests.get(url)
@@ -97,9 +104,7 @@ def scrapeShoePalanceWebsite(url):
 def main():
     url = ""
     try:
-    
         url = sys.argv[2]
-        
         try:
             if(sys.argv[1] == "--spVariants"):
                 data = scrapeShoePalanceWebsite(url)
