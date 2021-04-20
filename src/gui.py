@@ -39,7 +39,7 @@ try:
 
                 elif event == 'Shop Nice Kicks':
                     data = Scraper.scrapeShopNiceKicksWebsite(url)
-                    out = Scrape.snkVariants(data)
+                    out = Scraper.snkVariants(data)
                     print('clicked snk')
                 else:
                     window['-OUTPUT-'].update()
